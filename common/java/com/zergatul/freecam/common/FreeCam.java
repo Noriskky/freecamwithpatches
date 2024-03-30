@@ -244,11 +244,11 @@ public class FreeCam {
         }
     }
 
-    public boolean onRenderCrosshairIsFirstPerson(CameraType cameraType) {
-        if (active && !cameraLock && !eyeLock && !followCamera && config.target) {
-            return true;
+    public boolean onRenderCrosshairModifyIsFirstPerson(boolean value) {
+        if (active) {
+            return !cameraLock && !eyeLock && !followCamera && config.target;
         } else {
-            return cameraType.isFirstPerson();
+            return value;
         }
     }
 

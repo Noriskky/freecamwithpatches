@@ -23,7 +23,7 @@ public abstract class MixinCamera {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", ordinal = 0),
             method = "setup(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/world/entity/Entity;ZZF)V",
             cancellable = true)
-    private void onSetup(BlockGetter level, Entity entity, boolean detached, boolean mirrored, float particalTicks, CallbackInfo info) {
+    private void onSetup(BlockGetter level, Entity entity, boolean detached, boolean mirrored, float partialTicks, CallbackInfo info) {
         FreeCam controller = FreeCam.instance;
         if (FreeCam.instance.isActive()) {
             setRotation(controller.getYRot(), controller.getXRot());
