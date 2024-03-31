@@ -59,6 +59,19 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}"}
     }
+
+    exclude("com/zergatul/freecam/common/mixins/excluded/**")
+}
+
+task fixRefMaps {
+    doFirst {
+        File file = file('build/classes/java/main/zergatul.freecam-refmap.json')
+        file.text = file.text.replaceAll('"com/zergatul/freecam/common/mixins/excluded/Mixin', '"com/zergatul/freecam/common/mixins/Mixin')
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    finalizedBy(fixRefMaps)
 }
 
 tasks.build.doLast {

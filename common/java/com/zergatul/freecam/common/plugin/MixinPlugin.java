@@ -21,12 +21,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
     }
 
     @Override
-    public boolean shouldApplyMixin(String s, String s1) {
+    public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         return true;
     }
 
     @Override
-    public void acceptTargets(Set<String> set, Set<String> set1) {
+    public void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
 
     }
 
@@ -36,12 +36,12 @@ public class MixinPlugin implements IMixinConfigPlugin {
     }
 
     @Override
-    public void preApply(String s, ClassNode classNode, String s1, IMixinInfo iMixinInfo) {
+    public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
     }
 
     @Override
-    public void postApply(String s, ClassNode classNode, String s1, IMixinInfo iMixinInfo) {
+    public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
     }
 }

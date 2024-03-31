@@ -73,6 +73,8 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('jar', Jar).configure {
     archiveFileName = "zergatul.freecam-$mod_version-forge-${minecraft_version}.jar"
 
+    exclude("com/zergatul/freecam/common/mixins/excluded/**")
+
     manifest {
         attributes([
             'Specification-Title'     : mod_id,
@@ -101,4 +103,15 @@ sourceSets.each {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
+}
+
+task fixRefMaps {
+    doFirst {
+        File file = file('build/tmp/compileJava/zergatul.freecam.mixin-refmap.json')
+        file.text = file.text.replaceAll('"com/zergatul/freecam/common/mixins/excluded/Mixin', '"com/zergatul/freecam/common/mixins/Mixin')
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    finalizedBy(fixRefMaps)
 }
