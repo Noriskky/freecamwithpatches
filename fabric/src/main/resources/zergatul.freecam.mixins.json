@@ -1,9 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.zergatul.freecam.common.mixins",
+  "package": "com.zergatul.freecam.mixins",
   "compatibilityLevel": "JAVA_17",
-  "plugin": "com.zergatul.freecam.common.plugin.MixinPlugin",
+  "plugin": "com.zergatul.mixin.MixinPlugin",
   "client": [
     "MixinCamera",
     "MixinClientPacketListener",

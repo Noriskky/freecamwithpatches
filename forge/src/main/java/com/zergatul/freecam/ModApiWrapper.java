@@ -1,7 +1,5 @@
 package com.zergatul.freecam;
 
-import com.zergatul.freecam.common.FreeCam;
-import com.zergatul.freecam.common.WrappedRegistry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.TickEvent;

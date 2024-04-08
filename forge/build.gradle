@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
@@ -41,13 +43,25 @@ minecraft {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets {
+    main {
+        java {
+            srcDir '../common/mod/java'
+            srcDir '../common/mixin-plugin/java'
+        }
+        resources {
+            srcDir '../common/mod/resources'
+            srcDir 'src/generated/resources'
+        }
+    }
+}
 
 repositories {
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor files('../annotation-processor/build/libs/annotation-processor.jar')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -73,8 +87,6 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('jar', Jar).configure {
     archiveFileName = "zergatul.freecam-$mod_version-forge-${minecraft_version}.jar"
 
-    exclude("com/zergatul/freecam/common/mixins/excluded/**")
-
     manifest {
         attributes([
             'Specification-Title'     : mod_id,
@@ -95,23 +107,32 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
+tasks.register('buildAnnotationProcessor', {
+    doFirst {
+        def annotationProcessorJar = file('../annotation-processor/build/libs/annotation-processor.jar')
+        if (!annotationProcessorJar.exists()) {
+            println 'Annotation processor JAR not found. Building annotation processor...'
+            def buildResult = exec {
+                def gradlew = Os.isFamily(Os.FAMILY_WINDOWS) ? 'gradlew.bat' : 'gradlew'
+                commandLine "../annotation-processor/$gradlew", '-p', '../annotation-processor', 'build'
+            }
+            if (buildResult.exitValue != 0) {
+                throw new GradleException('Failed to build the annotation processor project.')
+            }
+        }
+    }
+})
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn('buildAnnotationProcessor')
+}
+
 // Merge the resources and classes into the same directory.
 // This is done because java expects modules to be in a single directory.
 // And if we have it in multiple we have to do performance intensive hacks like having the UnionFileSystem
 // This will eventually be migrated to ForgeGradle so modders don't need to manually do it. But that is later.
-sourceSets.each {
+sourceSets.main {
     def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
     it.output.resourcesDir = dir
     it.java.destinationDirectory = dir
-}
-
-task fixRefMaps {
-    doFirst {
-        File file = file('build/tmp/compileJava/zergatul.freecam.mixin-refmap.json')
-        file.text = file.text.replaceAll('"com/zergatul/freecam/common/mixins/excluded/Mixin', '"com/zergatul/freecam/common/mixins/Mixin')
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    finalizedBy(fixRefMaps)
 }
