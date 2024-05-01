@@ -6,6 +6,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinLevelRenderer {
 
     @ModifyArg(
-            method = "renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V",
+            method = "renderLevel",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;setupRender(Lnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/culling/Frustum;ZZ)V"),
             index = 3)
     private boolean onCallSetupRender(boolean isSpectator) {
@@ -28,17 +29,18 @@ public abstract class MixinLevelRenderer {
         }
     }
 
-    @Inject(at = @At("TAIL"), method = "renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lorg/joml/Matrix4f;)V")
+    @Inject(at = @At("TAIL"), method = "renderLevel")
     private void onRenderLevel(
-            PoseStack poseStack,
             float tickDelta,
             long limitTime,
             boolean renderBlockOutline,
             Camera camera,
             GameRenderer gameRenderer,
             LightTexture lightTexture,
-            Matrix4f projectionMatrix,
-            CallbackInfo ci) {
-        FreeCam.instance.onRenderWorldLast(poseStack, projectionMatrix, camera);
+            Matrix4f pose,
+            Matrix4f projection,
+            CallbackInfo info
+    ) {
+        FreeCam.instance.onRenderWorldLast(pose, projection, camera);
     }
 }

@@ -337,7 +337,7 @@ public class FreeCam {
         disable();
     }
 
-    public void onRenderWorldLast(PoseStack poseStack, Matrix4f projectionMatrix, Camera camera) {
+    public void onRenderWorldLast(Matrix4f pose, Matrix4f projectionMatrix, Camera camera) {
         if (!active || moveAlongPath) {
             return;
         }
@@ -368,7 +368,7 @@ public class FreeCam {
                     .color(1, 1, 1, 1f).endVertex();
         }
 
-        renderLines(bufferBuilder, poseStack.last().pose(), projectionMatrix);
+        renderLines(bufferBuilder, pose, projectionMatrix);
     }
 
     private void startPath() {
