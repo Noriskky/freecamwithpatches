@@ -1,4 +1,4 @@
-package com.zergatul.freecam.common;
+package com.zergatul.freecam;
 
 public class FreeCamConfig {
 
@@ -17,6 +17,7 @@ public class FreeCamConfig {
     public double slowdownFactor;
     public boolean renderHands;
     public boolean target;
+    public boolean spectatorMovement;
 
     public FreeCamConfig() {
         acceleration = DefaultAcceleration;

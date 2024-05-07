@@ -1,6 +1,5 @@
 package com.zergatul.freecam;
 
-import com.zergatul.freecam.common.KeyBindings;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;

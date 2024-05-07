@@ -1,11 +1,10 @@
-package com.zergatul.freecam.common;
+package com.zergatul.freecam;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-import com.zergatul.freecam.ModApiWrapper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
@@ -419,7 +418,9 @@ public class FreeCam {
     private void calculateVectors() {
         rotation.set(0.0F, 0.0F, 0.0F, 1.0F);
         rotation.mul(Vector3f.YP.rotationDegrees(-yRot));
-        rotation.mul(Vector3f.XP.rotationDegrees(xRot));
+        if (!config.spectatorMovement) {
+            rotation.mul(Vector3f.XP.rotationDegrees(xRot));
+        }
         forwards.set(0.0F, 0.0F, 1.0F);
         forwards.transform(rotation);
         up.set(0.0F, 1.0F, 0.0F);

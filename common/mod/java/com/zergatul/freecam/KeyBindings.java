@@ -1,4 +1,4 @@
-package com.zergatul.freecam.common;
+package com.zergatul.freecam;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;

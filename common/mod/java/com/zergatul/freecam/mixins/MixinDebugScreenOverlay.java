@@ -1,6 +1,6 @@
-package com.zergatul.freecam.common.mixins;
+package com.zergatul.freecam.mixins;
 
-import com.zergatul.freecam.common.FreeCam;
+import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.gui.components.DebugScreenOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

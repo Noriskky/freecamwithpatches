@@ -1,8 +1,8 @@
-package com.zergatul.freecam.common.mixins;
+package com.zergatul.freecam.mixins;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
-import com.zergatul.freecam.common.FreeCam;
+import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;

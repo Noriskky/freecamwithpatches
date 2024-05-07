@@ -1,6 +1,6 @@
-package com.zergatul.freecam.common.mixins;
+package com.zergatul.freecam.mixins;
 
-import com.zergatul.freecam.common.ChatCommandManager;
+import com.zergatul.freecam.ChatCommandManager;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Mixin;

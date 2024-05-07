@@ -1,6 +1,6 @@
-package com.zergatul.freecam.common.mixins;
+package com.zergatul.freecam.mixins;
 
-import com.zergatul.freecam.common.FreeCam;
+import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;

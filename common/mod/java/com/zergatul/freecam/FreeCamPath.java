@@ -1,4 +1,4 @@
-package com.zergatul.freecam.common;
+package com.zergatul.freecam;
 
 import net.minecraft.world.phys.Vec3;
 
