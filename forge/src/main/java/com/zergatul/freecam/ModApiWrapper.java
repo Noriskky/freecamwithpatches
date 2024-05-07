@@ -22,6 +22,9 @@ public class ModApiWrapper {
         if (event.phase == TickEvent.Phase.START) {
             FreeCam.instance.onClientTickStart();
         }
+        if (event.phase == TickEvent.Phase.END) {
+            ChatCommandManager.instance.onClientTickEnd();
+        }
     }
 
     private record ForgeWrappedRegistry<T>(IForgeRegistry<T> registry) implements WrappedRegistry<T> {

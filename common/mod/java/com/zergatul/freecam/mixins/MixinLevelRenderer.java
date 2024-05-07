@@ -1,12 +1,10 @@
 package com.zergatul.freecam.mixins;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

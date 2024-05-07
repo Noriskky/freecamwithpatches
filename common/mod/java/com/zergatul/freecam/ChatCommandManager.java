@@ -1,5 +1,6 @@
 package com.zergatul.freecam;
 
+import com.zergatul.freecam.ui.FreeCamSettingsScreen;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -16,7 +17,8 @@ public class ChatCommandManager {
 
     private final MutableComponent chatPrefix = Component.literal("[freecam]").withStyle(ChatFormatting.GREEN).append(" ");
     private final ParserEntry[] patterns = new ParserEntry[] {
-            new ParserEntry(Pattern.compile("^\\.freecam$"), this::showCurrentSettings),
+            new ParserEntry(Pattern.compile("^\\.freecam$"), this::openSettings),
+            new ParserEntry(Pattern.compile("^\\.freecam\\s+show$"), this::showCurrentSettings),
             new ParserEntry(Pattern.compile("^\\.freecam\\s+path$"), this::showPathInfo),
             new ParserEntry(Pattern.compile("^\\.freecam\\s+path\\s+clear$"), this::clearPath),
             new ParserEntry(Pattern.compile("^\\.freecam\\s+path\\s+add\\s+(?<value>\\S+)$"), setDoubleValue(this::addPathPoint)),
@@ -28,8 +30,20 @@ public class ChatCommandManager {
             new ParserEntry(Pattern.compile("^\\.freecam\\s+(movement)\\s+(?<value>\\S+)$"), this::setMovementMode),
     };
 
-    private ChatCommandManager() {
+    private int openSettingsScreenTicks;
 
+    private ChatCommandManager() {
+        openSettingsScreenTicks = -1;
+    }
+
+    public void onClientTickEnd() {
+        if (openSettingsScreenTicks > 0) {
+            openSettingsScreenTicks--;
+            if (openSettingsScreenTicks == 0) {
+                openSettingsScreenTicks = -1;
+                Minecraft.getInstance().setScreen(new FreeCamSettingsScreen());
+            }
+        }
     }
 
     public boolean handleChatMessage(String message) {
@@ -60,6 +74,10 @@ public class ChatCommandManager {
         }
 
         return true;
+    }
+
+    private void openSettings(FreeCamConfig config, Matcher matcher) {
+        openSettingsScreenTicks = 4;
     }
 
     private void showCurrentSettings(FreeCamConfig config, Matcher matcher) {
@@ -204,6 +222,10 @@ public class ChatCommandManager {
     private void printHelp() {
         printSystemMessage(chatPrefix.copy()
                 .append(Component.literal("Invalid syntax").withStyle(ChatFormatting.RED)).append("\n")
+                .append(Component.literal("- ").withStyle(ChatFormatting.WHITE))
+                .append(Component.literal(".freecam").withStyle(ChatFormatting.YELLOW))
+                .append(Component.literal(" open settings menu").withStyle(ChatFormatting.WHITE))
+                .append("\n")
                 .append(Component.literal("- ").withStyle(ChatFormatting.WHITE))
                 .append(Component.literal(".freecam maxspeed 50").withStyle(ChatFormatting.YELLOW))
                 .append(Component.literal(" set maximum speed, blocks/second").withStyle(ChatFormatting.WHITE))

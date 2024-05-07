@@ -17,9 +17,8 @@ public class ModApiWrapper {
     }
 
     public void setup() {
-        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            FreeCam.instance.onClientTickStart();
-        });
+        ClientTickEvents.START_CLIENT_TICK.register(client -> FreeCam.instance.onClientTickStart());
+        ClientTickEvents.END_CLIENT_TICK.register(client -> ChatCommandManager.instance.onClientTickEnd());
     }
 
     private record VanillaWrapperRegistry<T>(Registry<T> registry) implements WrappedRegistry<T> {

@@ -1,5 +1,6 @@
 package com.zergatul.freecam.mixins;
 
+import com.zergatul.freecam.ChatCommandManager;
 import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ReceivingLevelScreen;
