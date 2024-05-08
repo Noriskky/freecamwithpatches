@@ -19,6 +19,7 @@ public class FreeCamConfig {
     public boolean target;
     public boolean spectatorMovement;
     public boolean rememberInputState;
+    public boolean showMyName;
 
     public FreeCamConfig() {
         acceleration = DefaultAcceleration;
@@ -48,6 +49,7 @@ public class FreeCamConfig {
         copy.target = target;
         copy.spectatorMovement = spectatorMovement;
         copy.rememberInputState = rememberInputState;
+        copy.showMyName = showMyName;
         return copy;
     }
 
@@ -60,7 +62,8 @@ public class FreeCamConfig {
                     other.renderHands == renderHands &&
                     other.target == target &&
                     other.spectatorMovement == spectatorMovement &&
-                    other.rememberInputState == rememberInputState;
+                    other.rememberInputState == rememberInputState &&
+                    other.showMyName == showMyName;
         } else {
             return false;
         }

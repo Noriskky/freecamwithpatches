@@ -20,5 +20,7 @@
   "options.freecam.settings.remember.input.tooltip": "Remembers state of WASD/Jump/Crouch keys when you activate FreeCam",
   "options.freecam.settings.flymode": "Fly Mode",
   "options.freecam.settings.flymode.default": "Default",
-  "options.freecam.settings.flymode.spectator": "Spectator"
+  "options.freecam.settings.flymode.spectator": "Spectator",
+  "options.freecam.settings.show.name": "Show My Name",
+  "options.freecam.settings.show.name.tooltip": "Show/hide your name while in FreeCam"
 }

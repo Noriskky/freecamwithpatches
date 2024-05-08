@@ -12,6 +12,7 @@
     "MixinGameRenderer",
     "MixinGui",
     "MixinLevelRenderer",
+    "MixinLivingEntityRenderer",
     "MixinMinecraft",
     "MixinMouseHandler",
     "MixinOptions"

@@ -43,7 +43,19 @@ public class ModifyMethodReturnValueInjector extends Injector {
 
             invokeHandler(instructions);
             target.insns.insert(instructionNode, instructions);
-        } else {
+        } /*else if (instructionNode instanceof VarInsnNode varInsnNode) {
+            if (varInsnNode.getOpcode() == Opcodes.ALOAD) {
+                if (this.isStatic) {
+                    InsnList instructions = new InsnList();
+                    invokeHandler(instructions);
+                    target.insns.insert(instructionNode, instructions);
+                } else {
+                    throw new InvalidInjectionPointException(this.info, "Can only inject static method.");
+                }
+            } else {
+                throw new InvalidInjectionPointException(this.info, "Can only inject into ALOAD.");
+            }
+        }*/ else {
             throw new InvalidInjectionPointException(this.info, "@ModifyMethodReturnValue should point to method instruction.");
         }
     }

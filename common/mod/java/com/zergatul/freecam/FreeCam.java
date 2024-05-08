@@ -267,6 +267,10 @@ public class FreeCam {
         }
     }
 
+    public boolean shouldShowMyName() {
+        return active && config.showMyName;
+    }
+
     public void onRenderTickStart(float partialTicks) {
         if (!active) {
             return;

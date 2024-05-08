@@ -32,6 +32,8 @@ public class FreeCamSettingsScreen extends Screen {
     private static final Component FLY_MODE = Component.translatable("options.freecam.settings.flymode");
     private static final Component FLY_MODE_DEFAULT = Component.translatable("options.freecam.settings.flymode.default");
     private static final Component FLY_MODE_SPECTATOR = Component.translatable("options.freecam.settings.flymode.spectator");
+    private static final Component SHOW_MY_NAME = Component.translatable("options.freecam.settings.show.name");
+    private static final Component SHOW_MY_NAME_TOOLTIP = Component.translatable("options.freecam.settings.show.name.tooltip");
     private static final int BUTTON_WIDTH = 150;
     private static final int BUTTON_HEIGHT = 20;
     private static final int DONE_BUTTON_WIDTH = 200;
@@ -149,6 +151,14 @@ public class FreeCamSettingsScreen extends Screen {
                 .withTooltip(value -> Tooltip.create(INPUT_TOOLTIP))
                 .create(column2, y, BUTTON_WIDTH, BUTTON_HEIGHT, INPUT, (button, value) -> {
                     FreeCam.instance.getConfig().rememberInputState = value;
+                }));
+
+        y += LINE_HEIGHT;
+        addRenderableWidget(CycleButton.onOffBuilder()
+                .withInitialValue(FreeCam.instance.getConfig().showMyName)
+                .withTooltip(value -> Tooltip.create(SHOW_MY_NAME_TOOLTIP))
+                .create(column1, y, BUTTON_WIDTH, BUTTON_HEIGHT, SHOW_MY_NAME, (button, value) -> {
+                    FreeCam.instance.getConfig().showMyName = value;
                 }));
 
         y += 2 * LINE_HEIGHT;
