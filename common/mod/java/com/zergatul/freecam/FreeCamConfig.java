@@ -18,6 +18,8 @@ public class FreeCamConfig {
     public boolean renderHands;
     public boolean target;
     public boolean spectatorMovement;
+    public boolean rememberInputState;
+    public boolean showMyName;
 
     public FreeCamConfig() {
         acceleration = DefaultAcceleration;
@@ -35,6 +37,35 @@ public class FreeCamConfig {
         }
         if (slowdownFactor < MinSlowdownFactor || slowdownFactor > MaxSlowdownFactor) {
             slowdownFactor = DefaultSlowdownFactor;
+        }
+    }
+
+    public FreeCamConfig clone() {
+        FreeCamConfig copy = new FreeCamConfig();
+        copy.acceleration = acceleration;
+        copy.maxSpeed = maxSpeed;
+        copy.slowdownFactor = slowdownFactor;
+        copy.renderHands = renderHands;
+        copy.target = target;
+        copy.spectatorMovement = spectatorMovement;
+        copy.rememberInputState = rememberInputState;
+        copy.showMyName = showMyName;
+        return copy;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof FreeCamConfig other) {
+            return  other.acceleration == acceleration &&
+                    other.maxSpeed == maxSpeed &&
+                    other.slowdownFactor == slowdownFactor &&
+                    other.renderHands == renderHands &&
+                    other.target == target &&
+                    other.spectatorMovement == spectatorMovement &&
+                    other.rememberInputState == rememberInputState &&
+                    other.showMyName == showMyName;
+        } else {
+            return false;
         }
     }
 }

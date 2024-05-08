@@ -1,7 +1,5 @@
 package com.zergatul.freecam;
 
-import com.zergatul.freecam.common.FreeCam;
-import com.zergatul.freecam.common.WrappedRegistry;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -18,9 +16,8 @@ public class ModApiWrapper {
     }
 
     public void setup() {
-        ClientTickEvents.START_CLIENT_TICK.register(client -> {
-            FreeCam.instance.onClientTickStart();
-        });
+        ClientTickEvents.START_CLIENT_TICK.register(client -> FreeCam.instance.onClientTickStart());
+        ClientTickEvents.END_CLIENT_TICK.register(client -> ChatCommandManager.instance.onTickEnd());
     }
 
     private record VanillaWrapperRegistry<T>(Registry<T> registry) implements WrappedRegistry<T> {

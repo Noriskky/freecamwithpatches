@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven { url = 'https://repo.spongepowered.org/maven' }
@@ -16,7 +18,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '2.0.0'
+version = '2.3.0'
 group = 'com.zergatul.freecam'
 archivesBaseName = 'zergatul.freecam'
 
@@ -49,6 +51,7 @@ sourceSets {
     main {
         java {
             srcDir '../common/mod/java'
+            srcDir '../common/mixin-plugin/java'
         }
         resources {
             srcDir '../common/mod/resources'
@@ -62,6 +65,7 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.4'
+    annotationProcessor files('../annotation-processor/build/libs/annotation-processor.jar')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -71,6 +75,8 @@ mixin {
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
+    archiveFileName = "zergatul.freecam-$version-forge-1.19.2.jar"
+
     manifest {
         attributes([
                 "Specification-Title"     : "zergatul.freecam",
@@ -102,4 +108,24 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.register('buildAnnotationProcessor', {
+    doFirst {
+        def annotationProcessorJar = file('../annotation-processor/build/libs/annotation-processor.jar')
+        if (!annotationProcessorJar.exists()) {
+            println 'Annotation processor JAR not found. Building annotation processor...'
+            def buildResult = exec {
+                def gradlew = Os.isFamily(Os.FAMILY_WINDOWS) ? 'gradlew.bat' : 'gradlew'
+                commandLine "../annotation-processor/$gradlew", '-p', '../annotation-processor', 'build'
+            }
+            if (buildResult.exitValue != 0) {
+                throw new GradleException('Failed to build the annotation processor project.')
+            }
+        }
+    }
+})
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn('buildAnnotationProcessor')
 }

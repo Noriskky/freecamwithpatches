@@ -1,19 +1,19 @@
 package com.zergatul.freecam.mixins;
 
 import com.zergatul.freecam.FreeCam;
-import net.minecraft.client.CameraType;
+import com.zergatul.mixin.ModifyMethodReturnValue;
 import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(Gui.class)
+@Mixin(value = Gui.class, priority = 2000)
 public abstract class MixinGui {
 
-    @Redirect(
-            method = "renderCrosshair(Lcom/mojang/blaze3d/vertex/PoseStack;)V",
+    @SuppressWarnings("unused")
+    @ModifyMethodReturnValue(
+            method = "renderCrosshair",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
-    private boolean onRenderCrosshairIsFirstPerson(CameraType cameraType) {
-        return FreeCam.instance.onRenderCrosshairIsFirstPerson(cameraType);
+    private static boolean onRenderCrosshairModifyIsFirstPerson(boolean value) {
+        return FreeCam.instance.onRenderCrosshairModifyIsFirstPerson(value);
     }
 }
