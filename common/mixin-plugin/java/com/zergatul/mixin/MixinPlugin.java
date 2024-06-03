@@ -13,6 +13,7 @@ public class MixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String s) {
         InjectionInfo.register(ModifyMethodReturnValueInjectionInfo.class);
+        InjectionInfo.register(WrapMethodInsideIfConditionInjectionInfo.class);
     }
 
     @Override
