@@ -1,5 +1,6 @@
 package com.zergatul.mixin;
 
+import com.zergatul.mixin.helpers.LocalVarHelper;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.injection.code.Injector;
@@ -8,6 +9,8 @@ import org.spongepowered.asm.mixin.injection.struct.InjectionNodes;
 import org.spongepowered.asm.mixin.injection.struct.Target;
 import org.spongepowered.asm.mixin.injection.throwables.InvalidInjectionException;
 import org.spongepowered.asm.mixin.injection.throwables.InvalidInjectionPointException;
+
+import static org.objectweb.asm.Opcodes.*;
 
 public class WrapMethodInsideIfConditionInjector extends Injector {
 
@@ -33,29 +36,47 @@ public class WrapMethodInsideIfConditionInjector extends Injector {
             }
 
             Type[] arguments = Type.getArgumentTypes(methodInsnNode.desc);
+            if (methodInsnNode.getOpcode() != INVOKESTATIC) {
+                // add object instance
+                Type[] args2 = new Type[arguments.length + 1];
+                args2[0] = Type.getType(Object.class);
+                System.arraycopy(arguments, 0, args2, 1, arguments.length);
+                arguments = args2;
+            }
+
+            int[] argIndexes = new int[arguments.length];
+            int startIndex = target.getCurrentMaxLocals();
+            target.extendLocals().add(arguments).apply();
             for (int i = 0; i < arguments.length; i++) {
-                instructions.add(new VarInsnNode());
+                argIndexes[i] = startIndex;
+                startIndex += arguments[i].getSize();
             }
 
-            //Type methodType = Type.getMethodType(methodInsnNode.desc);
-            //Type.getMethodDescriptor() methodInsnNode.desc
+            // save stack into variables
+            for (int i = arguments.length - 1; i >= 0; i--) {
+                instructions.add(new VarInsnNode(LocalVarHelper.getStoreInst(arguments[i]), argIndexes[i]));
+            }
 
+            // load from variables into stack
+            for (int i = 0; i < arguments.length; i++) {
+                instructions.add(new VarInsnNode(LocalVarHelper.getLoadInst(arguments[i]), argIndexes[i]));
+            }
+
+            // call mixin method
             invokeHandler(instructions);
-            //target.insns.insert(instructionNode, instructions);
-        } /*else if (instructionNode instanceof VarInsnNode varInsnNode) {
-            if (varInsnNode.getOpcode() == Opcodes.ALOAD) {
-                if (this.isStatic) {
-                    InsnList instructions = new InsnList();
-                    invokeHandler(instructions);
-                    target.insns.insert(instructionNode, instructions);
-                } else {
-                    throw new InvalidInjectionPointException(this.info, "Can only inject static method.");
-                }
-            } else {
-                throw new InvalidInjectionPointException(this.info, "Can only inject into ALOAD.");
+
+            LabelNode label = new LabelNode();
+            instructions.add(new JumpInsnNode(IFEQ, label)); // if value is 0 (false), jump
+
+            // load from variables into stack
+            for (int i = 0; i < arguments.length; i++) {
+                instructions.add(new VarInsnNode(LocalVarHelper.getLoadInst(arguments[i]), argIndexes[i]));
             }
-        }*/ else {
-            throw new InvalidInjectionPointException(this.info, "@ModifyMethodReturnValue should point to method instruction.");
+
+            target.insns.insertBefore(instructionNode, instructions);
+            target.insns.insert(instructionNode, label);
+        } else {
+            throw new InvalidInjectionPointException(this.info, "@WrapMethodInsideIfCondition should point to method instruction.");
         }
     }
 }
