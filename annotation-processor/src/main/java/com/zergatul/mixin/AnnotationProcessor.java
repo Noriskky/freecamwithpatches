@@ -12,14 +12,18 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import java.util.Set;
 
-@SupportedAnnotationTypes("com.zergatul.mixin.ModifyMethodReturnValue")
-@SupportedSourceVersion(SourceVersion.RELEASE_17)
+@SupportedAnnotationTypes({
+        "com.zergatul.mixin.ModifyMethodReturnValue",
+        "com.zergatul.mixin.WrapMethodInsideIfCondition"
+})
+@SupportedSourceVersion(SourceVersion.RELEASE_21)
 public class AnnotationProcessor extends AbstractProcessor {
 
     public AnnotationProcessor() {
         // fix crash with missing IMixinService at this stage
         MessageRouter.setMessager(new NullMessager());
         InjectionInfo.register(ModifyMethodReturnValueInjectionInfo.class);
+        InjectionInfo.register(WrapMethodInsideIfConditionInjectionInfo.class);
     }
 
     @Override

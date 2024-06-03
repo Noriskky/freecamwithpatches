@@ -9,7 +9,6 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -238,7 +237,7 @@ public class FreeCam {
         }
     }
 
-    public void onPlayerTurn(LocalPlayer player, double yRot, double xRot) {
+    public boolean onPlayerTurn(double yRot, double xRot) {
         if (active && !cameraLock && !followCamera) {
             if (!eyeLock && !moveAlongPath) {
                 this.xRot += (float) xRot * 0.15F;
@@ -246,8 +245,9 @@ public class FreeCam {
                 this.xRot = Mth.clamp(this.xRot, -90, 90);
                 calculateVectors();
             }
+            return false;
         } else {
-            player.turn(yRot, xRot);
+            return true;
         }
     }
 
