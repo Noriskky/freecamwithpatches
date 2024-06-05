@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         maven { url = 'https://repo.spongepowered.org/maven' }
@@ -19,10 +21,6 @@ apply plugin: 'org.spongepowered.mixin'
 
 version = mod_version
 group = mod_group_id
-
-base {
-    archivesName = 'zergatul.freecam'
-}
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -51,13 +49,25 @@ minecraft {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+sourceSets {
+    main {
+        java {
+            srcDir '../common/mod/java'
+            srcDir '../common/mixin-plugin/java'
+        }
+        resources {
+            srcDir '../common/mod/resources'
+            srcDir 'src/generated/resources'
+        }
+    }
+}
 
 repositories {
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    annotationProcessor files('../annotation-processor/build/libs/annotation-processor.jar')
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
@@ -84,6 +94,8 @@ processResources {
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
+    archiveFileName = "zergatul.freecam-$mod_version-forge-${minecraft_version}.jar"
+
     manifest {
         attributes([
                 "Specification-Title"     : "zergatul.freecam",
@@ -115,4 +127,24 @@ publishing {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.register('buildAnnotationProcessor', {
+    doFirst {
+        def annotationProcessorJar = file('../annotation-processor/build/libs/annotation-processor.jar')
+        if (!annotationProcessorJar.exists()) {
+            println 'Annotation processor JAR not found. Building annotation processor...'
+            def buildResult = exec {
+                def gradlew = Os.isFamily(Os.FAMILY_WINDOWS) ? 'gradlew.bat' : 'gradlew'
+                commandLine "../annotation-processor/$gradlew", '-p', '../annotation-processor', 'build'
+            }
+            if (buildResult.exitValue != 0) {
+                throw new GradleException('Failed to build the annotation processor project.')
+            }
+        }
+    }
+})
+
+tasks.withType(JavaCompile).configureEach {
+    dependsOn('buildAnnotationProcessor')
 }
