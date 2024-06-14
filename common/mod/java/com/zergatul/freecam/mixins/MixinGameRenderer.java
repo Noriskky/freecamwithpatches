@@ -2,6 +2,7 @@ package com.zergatul.freecam.mixins;
 
 import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public abstract class MixinGameRenderer {
 
-    @Inject(at = @At("HEAD"), method = "render(FJZ)V")
-    private void onRender(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
-        FreeCam.instance.onRenderTickStart(tickDelta);
+    @Inject(at = @At("HEAD"), method = "render")
+    private void onRender(DeltaTracker delta, boolean tick, CallbackInfo ci) {
+        FreeCam.instance.onRenderTickStart(delta);
     }
 
     @Inject(at = @At("HEAD"), method = "pick(F)V")

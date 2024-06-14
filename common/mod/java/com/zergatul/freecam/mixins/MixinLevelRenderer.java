@@ -2,6 +2,7 @@ package com.zergatul.freecam.mixins;
 
 import com.zergatul.freecam.FreeCam;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -29,8 +30,7 @@ public abstract class MixinLevelRenderer {
 
     @Inject(at = @At("TAIL"), method = "renderLevel")
     private void onRenderLevel(
-            float tickDelta,
-            long limitTime,
+            DeltaTracker delta,
             boolean renderBlockOutline,
             Camera camera,
             GameRenderer gameRenderer,

@@ -4,10 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.Camera;
-import net.minecraft.client.CameraType;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.*;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
@@ -175,13 +172,13 @@ public class FreeCam {
             dontMoveFreeCamBefore = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(REMEMBER_STATE_DELAY_MS);
         }
 
-        float frameTime = mc.getFrameTime();
-        Vec3 pos = entity.getEyePosition(frameTime);
+        float partialTicks = mc.getTimer().getGameTimeDeltaPartialTick(true);
+        Vec3 pos = entity.getEyePosition(partialTicks);
         x = pos.x;
         y = pos.y;
         z = pos.z;
-        yRot = entity.getViewYRot(frameTime);
-        xRot = entity.getViewXRot(frameTime);
+        yRot = entity.getViewYRot(partialTicks);
+        xRot = entity.getViewXRot(partialTicks);
 
         calculateVectors();
 
@@ -271,7 +268,7 @@ public class FreeCam {
         return active && config.showMyName;
     }
 
-    public void onRenderTickStart(float partialTicks) {
+    public void onRenderTickStart(DeltaTracker delta) {
         if (!active) {
             return;
         }
@@ -299,7 +296,7 @@ public class FreeCam {
         } else if (followCamera) {
             Entity entity = mc.getCameraEntity();
             if (entity != null) {
-                Vec3 pos = entity.getEyePosition(partialTicks);
+                Vec3 pos = entity.getEyePosition(delta.getGameTimeDeltaPartialTick(true));
                 x = pos.x + followDeltaX;
                 y = pos.y + followDeltaY;
                 z = pos.z + followDeltaZ;
@@ -337,7 +334,7 @@ public class FreeCam {
             }
         }
 
-        applyEyeLock(partialTicks);
+        applyEyeLock(delta.getGameTimeDeltaPartialTick(true));
     }
 
     public void onClientTickStart() {
@@ -361,8 +358,8 @@ public class FreeCam {
             return;
         }
 
-        BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder bufferBuilder = tesselator.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
         RenderSystem.setShaderColor(1f, 1.0f, 1f, 1f);
 
         Vec3 view = camera.getPosition();
@@ -370,16 +367,16 @@ public class FreeCam {
             FreeCamPath.Entry e1 = path.get(i - 1);
             FreeCamPath.Entry e2 = path.get(i);
 
-            bufferBuilder.vertex(
-                            e1.position().x - view.x,
-                            e1.position().y - view.y,
-                            e1.position().z - view.z)
-                    .color(1, 1, 1, 1f).endVertex();
-            bufferBuilder.vertex(
-                            e2.position().x - view.x,
-                            e2.position().y - view.y,
-                            e2.position().z - view.z)
-                    .color(1, 1, 1, 1f).endVertex();
+            bufferBuilder.addVertex(
+                            (float) (e1.position().x - view.x),
+                            (float) (e1.position().y - view.y),
+                            (float) (e1.position().z - view.z))
+                    .setColor(1, 1, 1, 1f);
+            bufferBuilder.addVertex(
+                            (float) (e2.position().x - view.x),
+                            (float) (e2.position().y - view.y),
+                            (float) (e2.position().z - view.z))
+                    .setColor(1, 1, 1, 1f);
         }
 
         renderLines(bufferBuilder, pose, projectionMatrix);
@@ -539,7 +536,7 @@ public class FreeCam {
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
         SharedVertexBuffer.instance.bind();
-        SharedVertexBuffer.instance.upload(bufferBuilder.end());
+        SharedVertexBuffer.instance.upload(bufferBuilder.buildOrThrow());
         SharedVertexBuffer.instance.drawWithShader(pose, projection, GameRenderer.getPositionColorShader());
         VertexBuffer.unbind();
 
